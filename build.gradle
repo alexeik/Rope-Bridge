@@ -35,6 +35,7 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 //apply plugin: 'com.jaredsburrows.checkerframework'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -45,7 +46,7 @@ if (GradleVersion.current() < GradleVersion.version('4.0')) {
     apply plugin: 'findbugs'
 }
 
-import net.minecraftforge.gradle.common.task.SignJar
+//import net.minecraftforge.gradle.common.task.SignJar
 
 project.afterEvaluate {
     //final def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
@@ -121,7 +122,7 @@ pmd {
     ignoreFailures = true
     sourceSets = [sourceSets.main]
     reportsDir = file("$project.buildDir/reports/pmd")
-    rulePriority = 5
+    //rulePriority = 5
     ruleSets = [
             'java-android',
             'java-basic',
@@ -206,10 +207,10 @@ static String getBuildNumber() {
     return System.getenv('BUILD_NUMBER') ?: System.getenv('TRAVIS_BUILD_NUMBER') ?: System.getenv('CIRCLE_BUILD_NUM') ?: '0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-compileJava.sourceCompatibility = JavaVersion.VERSION_1_8
-compileJava.targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+compileJava.sourceCompatibility = JavaVersion.VERSION_16
+compileJava.targetCompatibility = JavaVersion.VERSION_16
 
 eclipse.project {
     buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
@@ -384,17 +385,17 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${project.forge_mc_version}-${project.forge_version}"
 
-    testCompile('org.junit.platform:junit-platform-launcher:1.7.+')
-    testCompile('org.junit.jupiter:junit-jupiter-api:5.7.+') // testImplementation
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.7.+') //testRuntimeOnly
+    //testCompile('org.junit.platform:junit-platform-launcher:1.7.+')
+    //testCompile('org.junit.jupiter:junit-jupiter-api:5.7.+') // testImplementation
+    //testRuntime('org.junit.jupiter:junit-jupiter-engine:5.7.+') //testRuntimeOnly
     if (GradleVersion.current() >= GradleVersion.version('2.13')) {
         testCompileOnly 'junit:junit:4.13.2'
     }
-    testRuntime 'org.junit.vintage:junit-vintage-engine:5.7.+' //testRuntimeOnly
-    testCompile('org.mockito:mockito-core:2.+')
-    testCompile('org.mockito:mockito-junit-jupiter:2.+') {
+    //testRuntime 'org.junit.vintage:junit-vintage-engine:5.7.+' //testRuntimeOnly
+    //testCompile('org.mockito:mockito-core:2.+')
+/*    testCompile('org.mockito:mockito-junit-jupiter:2.+') {
         exclude group: 'org.junit.jupiter', module: 'junit-jupiter-engine'
-    }
+    }*/
     if (GradleVersion.current() >= GradleVersion.version('4.6')) {
         annotationProcessor group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
     }
@@ -454,14 +455,13 @@ task apiJar(type: Jar) {
   }
 }
 */
-
 task deobfJar(type: Jar) {
     onlyIf {
         getBooleanProperty('create_deobf_jar')
     }
 
     description = 'Creates a JAR containing the non-obfuscated compiled code.'
-    classifier = 'deobf'
+    archiveClassifier = 'deobf'
     from sourceSets.main.output
     manifest {
         mainAttributes(
@@ -492,7 +492,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     }
 
     description = 'Creates a JAR containing the source code.'
-    classifier = 'sources'
+    archiveClassifier  = 'sources'
     from sourceSets.main.allSource
     manifest {
         mainAttributes(
@@ -517,7 +517,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     }
 
     description = 'Creates a JAR containing the JavaDocs.'
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.getDestinationDir()
     manifest.mainAttributes(
             'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:javadoc",
@@ -529,6 +529,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     )
 }
 
+/*
 task signJar(type: SignJar, dependsOn: jar) {
     onlyIf {
         getBooleanProperty('do_sign_jar') &&
@@ -544,6 +545,7 @@ task signJar(type: SignJar, dependsOn: jar) {
     storePass = project.findProperty('keyStorePass')
     keyPass = project.findProperty('keyStoreKeyPass')
 }
+*/
 
 /*
 task signApiJar(type: SignJar) {
@@ -563,6 +565,7 @@ task signApiJar(type: SignJar) {
   outputFile = apiJar.archivePath
 }
 */
+/*
 
 task signDeobfJar(type: SignJar) {
     onlyIf {
@@ -616,11 +619,13 @@ task signJavadocJar(type: SignJar) {
 
 if (getBooleanProperty('do_sign_jar')) {
     build.dependsOn signJar
-    /*
+    */
+/*
     if (getBooleanProperty('create_api_jar')) {
       build.dependsOn signApiJar
     }
-    */
+    *//*
+
     if (getBooleanProperty('create_deobf_jar')) {
         build.dependsOn signDeobfJar
     }
@@ -631,6 +636,7 @@ if (getBooleanProperty('do_sign_jar')) {
         build.dependsOn signJavadocJar
     }
 }
+*/
 
 tasks.publish.dependsOn build
 tasks.curseforge.dependsOn publish
@@ -669,9 +675,9 @@ publishing {
             version project.version
             from components.java
             if (getBooleanProperty('create_source_jar')) {
-                artifact sourcesJar {
-                    classifier 'sources'
-                }
+
+                    artifact sourcesJar
+
             }
             /*
             if (getBooleanProperty('create_api_jar')) {
@@ -681,13 +687,11 @@ publishing {
             }
             */
             if (getBooleanProperty('create_deobf_jar')) {
-                artifact deobfJar {
-                    classifier 'deobf'
-                }
+                artifact deobfJar
             }
             if (getBooleanProperty('create_javadoc_jar')) {
-                artifact javadocJar {
-                    classifier 'javadoc'
+                afterEvaluate {
+                    artifact javadocJar
                 }
             }
             /*

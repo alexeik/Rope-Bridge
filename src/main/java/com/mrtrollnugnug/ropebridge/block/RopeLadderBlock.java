@@ -2,18 +2,20 @@ package com.mrtrollnugnug.ropebridge.block;
 
 import com.mrtrollnugnug.ropebridge.handler.ConfigHandler;
 import com.mrtrollnugnug.ropebridge.handler.ContentHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LadderBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class RopeLadderBlock extends LadderBlock {
 
@@ -32,7 +34,7 @@ public class RopeLadderBlock extends LadderBlock {
 	}
 
 	@Override
-	public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity) {
+	public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity) {
 		return true;
 	}
 

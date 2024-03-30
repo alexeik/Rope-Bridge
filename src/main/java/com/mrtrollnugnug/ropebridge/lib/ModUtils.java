@@ -3,12 +3,12 @@ package com.mrtrollnugnug.ropebridge.lib;
 import com.mrtrollnugnug.ropebridge.block.RopeBridgeBlock;
 import com.mrtrollnugnug.ropebridge.block.RopeLadderBlock;
 import com.mrtrollnugnug.ropebridge.handler.ContentHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.Util;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,8 +33,8 @@ public class ModUtils {
 	 * The message to send. This can be a normal message, however
 	 * translation keys are HIGHLY encouraged!
 	 */
-	public static void tellPlayer(PlayerEntity sender, String message, Object... params) {
-		sender.sendMessage(new TranslationTextComponent(message, params), Util.DUMMY_UUID);
+	public static void tellPlayer(Player sender, String message, Object... params) {
+		sender.sendMessage(new TranslatableComponent(message, params), Util.NIL_UUID);
 	}
 
 	public static <T extends IForgeRegistryEntry<T>> void register(T obj, String name, IForgeRegistry<T> registry) {

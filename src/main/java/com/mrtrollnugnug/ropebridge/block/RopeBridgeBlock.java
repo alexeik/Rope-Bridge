@@ -4,21 +4,21 @@ import com.mrtrollnugnug.ropebridge.handler.ConfigHandler;
 import com.mrtrollnugnug.ropebridge.handler.ContentHandler;
 import com.mrtrollnugnug.ropebridge.lib.Constants.Messages;
 import com.mrtrollnugnug.ropebridge.lib.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,17 +32,17 @@ public class RopeBridgeBlock extends Block {
 		super(properties);
 	}
 
-	public static final IntegerProperty PROPERTY_HEIGHT = BlockStateProperties.LEVEL_0_3;
+	public static final IntegerProperty PROPERTY_HEIGHT = BlockStateProperties.LEVEL;
 	public static final IntegerProperty PROPERTY_BACK = IntegerProperty.create("back", 0, 3);
 	public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
 
-	public static final VoxelShape ZERO_AABB = Block.makeCuboidShape(0, 0, 0, 16, 4, 16);
-	public static final VoxelShape ONE_AABB = Block.makeCuboidShape(0, 4, 0, 16, 8, 16);
-	public static final VoxelShape TWO_AABB = Block.makeCuboidShape(0, 8, 0, 16, 12, 16);
-	public static final VoxelShape THREE_AABB = Block.makeCuboidShape(0, 12, 0, 16, 16, 16);
+	public static final VoxelShape ZERO_AABB = Block.box(0, 0, 0, 16, 4, 16);
+	public static final VoxelShape ONE_AABB = Block.box(0, 4, 0, 16, 8, 16);
+	public static final VoxelShape TWO_AABB = Block.box(0, 8, 0, 16, 12, 16);
+	public static final VoxelShape THREE_AABB = Block.box(0, 12, 0, 16, 16, 16);
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(PROPERTY_HEIGHT, PROPERTY_BACK, ROTATED);
 	}
 
@@ -59,8 +59,8 @@ public class RopeBridgeBlock extends Block {
 	@Nonnull
 	@Override
 	@SuppressWarnings("deprecation")
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-		int level = state.get(PROPERTY_HEIGHT);
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		int level = state.getValue(PROPERTY_HEIGHT);
 		switch (level) {
 			case 1:
 				return ONE_AABB;
@@ -75,25 +75,25 @@ public class RopeBridgeBlock extends Block {
 	}
 
 	@Override
-	public void onBlockHarvested(World world, final BlockPos pos, BlockState state, PlayerEntity player) {
-		super.onBlockHarvested(world, pos, state, player);
-		if (!world.isRemote && player.getHeldItemMainhand().getItem() == ContentHandler.bridge_builder && player.isCrouching()) {
+	public void playerWillDestroy(Level world, final BlockPos pos, BlockState state, Player player) {
+		super.playerWillDestroy(world, pos, state, player);
+		if (!world.isClientSide && player.getMainHandItem().getItem() == ContentHandler.bridge_builder && player.isCrouching()) {
 			ModUtils.tellPlayer(player, Messages.WARNING_BREAKING);
-			boolean rotate = world.getBlockState(pos).get(RopeBridgeBlock.ROTATED);
+			boolean rotate = world.getBlockState(pos).getValue(RopeBridgeBlock.ROTATED);
 			if (rotate) {
-				breakNorth(pos, (ServerWorld) world);
-				breakSouth(pos, (ServerWorld) world);
+				breakNorth(pos, (ServerLevel) world);
+				breakSouth(pos, (ServerLevel) world);
 			} else {
-				breakEast(pos, (ServerWorld) world);
-				breakWest(pos, (ServerWorld) world);
+				breakEast(pos, (ServerLevel) world);
+				breakWest(pos, (ServerLevel) world);
 			}
 		}
 	}
 
-	public void breakSouth(BlockPos posToBreak, ServerWorld world) {
+	public void breakSouth(BlockPos posToBreak, ServerLevel world) {
 		BlockPos south = posToBreak.south();
-		BlockPos up = south.up();
-		BlockPos down = south.down();
+		BlockPos up = south.above();
+		BlockPos down = south.below();
 		BlockState stateDown = world.getBlockState(down);
 		BlockState stateUp = world.getBlockState(up);
 		BlockState state = world.getBlockState(south);
@@ -126,10 +126,10 @@ public class RopeBridgeBlock extends Block {
 		}
 	}
 
-	public void breakNorth(BlockPos posToBreak, ServerWorld world) {
+	public void breakNorth(BlockPos posToBreak, ServerLevel world) {
 		BlockPos north = posToBreak.north();
-		BlockPos up = north.up();
-		BlockPos down = north.down();
+		BlockPos up = north.above();
+		BlockPos down = north.below();
 		BlockState stateDown = world.getBlockState(down);
 		BlockState stateUp = world.getBlockState(up);
 		BlockState state = world.getBlockState(north);
@@ -162,10 +162,10 @@ public class RopeBridgeBlock extends Block {
 		}
 	}
 
-	public void breakEast(BlockPos posToBreak, ServerWorld world) {
+	public void breakEast(BlockPos posToBreak, ServerLevel world) {
 		BlockPos east = posToBreak.east();
-		BlockPos up = east.up();
-		BlockPos down = east.down();
+		BlockPos up = east.above();
+		BlockPos down = east.below();
 		BlockState stateDown = world.getBlockState(down);
 		BlockState stateUp = world.getBlockState(up);
 		BlockState state = world.getBlockState(east);
@@ -198,10 +198,10 @@ public class RopeBridgeBlock extends Block {
 		}
 	}
 
-	public void breakWest(BlockPos posToBreak, ServerWorld world) {
+	public void breakWest(BlockPos posToBreak, ServerLevel world) {
 		BlockPos west = posToBreak.west();
-		BlockPos up = west.up();
-		BlockPos down = west.down();
+		BlockPos up = west.above();
+		BlockPos down = west.below();
 		BlockState stateDown = world.getBlockState(down);
 		BlockState stateUp = world.getBlockState(up);
 		BlockState state = world.getBlockState(west);

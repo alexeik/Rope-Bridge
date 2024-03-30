@@ -7,9 +7,9 @@ import com.mrtrollnugnug.ropebridge.item.ItemBridgeBuilder;
 import com.mrtrollnugnug.ropebridge.item.ItemLadderBuilder;
 import com.mrtrollnugnug.ropebridge.lib.Constants;
 import com.mrtrollnugnug.ropebridge.lib.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,8 +45,8 @@ public final class ContentHandler {
 
 	@SubscribeEvent
 	public static void initBlocks(final RegistryEvent.Register<Block> event) {
-		Block.Properties bridge = Block.Properties.from(Blocks.OAK_PLANKS).notSolid();
-		Block.Properties ladder = Block.Properties.from(Blocks.LADDER);
+		Block.Properties bridge = Block.Properties.copy(Blocks.OAK_PLANKS).noOcclusion();
+		Block.Properties ladder = Block.Properties.copy(Blocks.LADDER);
 		ModUtils.register(new RopeBridgeBlock(bridge), "oak_bridge", event.getRegistry());
 		ModUtils.register(new RopeBridgeBlock(bridge), "birch_bridge", event.getRegistry());
 		ModUtils.register(new RopeBridgeBlock(bridge), "jungle_bridge", event.getRegistry());
@@ -64,7 +64,7 @@ public final class ContentHandler {
 
 	@SubscribeEvent
 	public static void initItems(final RegistryEvent.Register<Item> event) {
-		Item.Properties properties = new Item.Properties().group(RopeBridge.RopeBridgeTab);
+		Item.Properties properties = new Item.Properties().tab(RopeBridge.RopeBridgeTab);
 		ModUtils.register(new ItemLadderBuilder(properties), "ladder_builder", event.getRegistry());
 		ModUtils.register(new Item(properties), "bridge_builder_hook", event.getRegistry());
 		ModUtils.register(new Item(properties), "bridge_builder_barrel", event.getRegistry());
