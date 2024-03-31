@@ -131,7 +131,7 @@ public class BridgeBuildingHandler
 				stack.hurtAndBreak(ConfigHandler.getBridgeDamage(), player, playerEntity ->
 					playerEntity.broadcastBreakEvent(player.getUsedItemHand()));
 			}
-			buildOneBlockOfBridge(player.level, bridge, slab, 0, rotate);
+			buildOneBlockOfBridgeRecursive(player.level, bridge, slab, 0, rotate);
 		}
 		else
 		{
@@ -261,7 +261,7 @@ public class BridgeBuildingHandler
 		}
 	}
 
-	private static void buildOneBlockOfBridge(final Level world, final List<SlabPosHandler> bridge, final Block slabBlock, int index, boolean rotated)
+	private static void buildOneBlockOfBridgeRecursive(final Level world, final List<SlabPosHandler> bridge, final Block slabBlock, int index, boolean rotated)
 	{
 
 		SlabPosHandler slab;
@@ -281,7 +281,7 @@ public class BridgeBuildingHandler
 				@Override
 				public void run()
 				{
-					buildOneBlockOfBridge(world, bridge, slabBlock, index + 1, rotated);
+					buildOneBlockOfBridgeRecursive(world, bridge, slabBlock, index + 1, rotated);
 				}
 			}, 100);
 		}
