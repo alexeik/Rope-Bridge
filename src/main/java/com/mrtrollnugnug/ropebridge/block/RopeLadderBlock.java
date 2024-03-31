@@ -19,7 +19,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class RopeLadderBlock extends LadderBlock {
 
-	public RopeLadderBlock(Properties properties) {
+	public RopeLadderBlock(Properties properties)
+	{
+
 		super(properties);
 	}
 
@@ -43,7 +45,7 @@ public class RopeLadderBlock extends LadderBlock {
 	@SuppressWarnings("deprecation")
 	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
 		List<ItemStack> drops = new ArrayList<>();
-		drops.add(new ItemStack(ContentHandler.rope, ConfigHandler.getRopePerLadder()));
+		drops.add(new ItemStack(ContentHandler.rope.get(), ConfigHandler.getRopePerLadder()));
 		drops.add(new ItemStack(slab, ConfigHandler.getWoodPerLadder()));
 		return drops;
 	}

@@ -34,7 +34,7 @@ public class LadderBuildingHandler {
 			return;
 		}
 
-		BlockState ladderState = ContentHandler.oak_rope_ladder.defaultBlockState().setValue(LadderBlock.FACING, hitSide);
+		BlockState ladderState = ContentHandler.oak_rope_ladder.get().defaultBlockState().setValue(LadderBlock.FACING, hitSide);
 
 		if (!ladderState.canSurvive(world, selected)) {
 			ModUtils.tellPlayer(player, Constants.Messages.NOT_SOLID);
@@ -117,7 +117,7 @@ public class LadderBuildingHandler {
 		if (player.getAbilities().instabuild || noCost) {
 			return;
 		}
-		player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem() == ContentHandler.rope, ropeNeeded, player.inventoryMenu.getCraftSlots());
+		player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem() == ContentHandler.rope.get(), ropeNeeded, player.inventoryMenu.getCraftSlots());
 		player.getInventory().clearOrCountMatchingItems(stack -> stack.getItem() == woodType.asItem(), woodNeeded, player.inventoryMenu.getCraftSlots());
 	}
 
@@ -134,7 +134,7 @@ public class LadderBuildingHandler {
 			if (i.isEmpty())
 				continue;
 			Item item = i.getItem();
-			if (item == ContentHandler.rope) {
+			if (item == ContentHandler.rope.get()) {
 				ropeNeeded -= i.getCount();
 			} else if (item == toFind.asItem()) {
 				woodNeeded -= i.getCount();

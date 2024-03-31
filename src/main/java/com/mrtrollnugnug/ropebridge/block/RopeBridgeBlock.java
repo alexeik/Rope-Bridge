@@ -26,13 +26,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class RopeBridgeBlock extends Block {
 
 	public RopeBridgeBlock(Properties properties) {
 		super(properties);
 	}
 
-	public static final IntegerProperty PROPERTY_HEIGHT = BlockStateProperties.LEVEL;
+	public static final IntegerProperty PROPERTY_HEIGHT = IntegerProperty.create("level", 0, 3);
 	public static final IntegerProperty PROPERTY_BACK = IntegerProperty.create("back", 0, 3);
 	public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
 
@@ -77,7 +79,7 @@ public class RopeBridgeBlock extends Block {
 	@Override
 	public void playerWillDestroy(Level world, final BlockPos pos, BlockState state, Player player) {
 		super.playerWillDestroy(world, pos, state, player);
-		if (!world.isClientSide && player.getMainHandItem().getItem() == ContentHandler.bridge_builder && player.isCrouching()) {
+		if (!world.isClientSide && player.getMainHandItem().getItem() == ContentHandler.bridge_builder.get() && player.isCrouching()) {
 			ModUtils.tellPlayer(player, Messages.WARNING_BREAKING);
 			boolean rotate = world.getBlockState(pos).getValue(RopeBridgeBlock.ROTATED);
 			if (rotate) {
@@ -234,12 +236,13 @@ public class RopeBridgeBlock extends Block {
 		}
 	}
 
+	//убрал, так как теперь нужно переходить на datapack с loottable, но можно и так. Проблема , что этот метод лезет в конфиг мода, который не загружен почемуто.
 	@Nonnull
 	@Override
 	@SuppressWarnings("deprecation")
 	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
 		List<ItemStack> drops = new ArrayList<>();
-		drops.add(new ItemStack(ContentHandler.rope, ConfigHandler.getRopePerBridge()));
+		drops.add(new ItemStack(ContentHandler.rope.get(), ConfigHandler.getRopePerBridge()));
 		drops.add(new ItemStack(slab, ConfigHandler.getSlabsPerBridge()));
 		return drops;
 	}

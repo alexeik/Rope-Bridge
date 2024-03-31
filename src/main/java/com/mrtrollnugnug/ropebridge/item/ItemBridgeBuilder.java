@@ -14,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -106,8 +105,8 @@ public class ItemBridgeBuilder extends ItemBuilder {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(new TextComponent("- Hold right-click to build"));
-		tooltip.add(new TextComponent("- Sneak to break whole bridge"));
+		tooltip.add(Component.literal("- Hold right-click to build"));
+		tooltip.add(Component.literal("- Sneak to break whole bridge"));
 	}
 
 	private static boolean isBridgeBlock(Block block) {

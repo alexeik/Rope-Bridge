@@ -4,28 +4,28 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 public final class ConfigHandler {
-	private static ForgeConfigSpec.IntValue maxBridgeDistance;
-	private static ForgeConfigSpec.IntValue bridgeDroopFactor;
-	private static ForgeConfigSpec.DoubleValue bridgeYOffset;
-	private static ForgeConfigSpec.BooleanValue breakThroughBlocks;
-	private static ForgeConfigSpec.BooleanValue ignoreSlopeWarnings;
-	private static ForgeConfigSpec.IntValue slabsPerBridge;
-	private static ForgeConfigSpec.IntValue ropePerBridge;
-	private static ForgeConfigSpec.IntValue woodPerLadder;
-	private static ForgeConfigSpec.IntValue ropePerLadder;
-	private static ForgeConfigSpec.IntValue bridgeDamage;
-	private static ForgeConfigSpec.IntValue ladderDamage;
+	private static ForgeConfigSpec.ConfigValue<Integer> maxBridgeDistance;
+	private static ForgeConfigSpec.ConfigValue<Integer> bridgeDroopFactor;
+	private static ForgeConfigSpec.ConfigValue<Double> bridgeYOffset;
+	private static ForgeConfigSpec.ConfigValue<Boolean> breakThroughBlocks;
+	private static ForgeConfigSpec.ConfigValue<Boolean> ignoreSlopeWarnings;
+	private static ForgeConfigSpec.ConfigValue<Integer> slabsPerBridge;
+	private static ForgeConfigSpec.ConfigValue<Integer> ropePerBridge;
+	private static ForgeConfigSpec.ConfigValue<Integer> woodPerLadder;
+	private static ForgeConfigSpec.ConfigValue<Integer> ropePerLadder;
+	private static ForgeConfigSpec.ConfigValue<Integer> bridgeDamage;
+	private static ForgeConfigSpec.ConfigValue<Integer> ladderDamage;
 
-	public static final ConfigHandler SERVER;
-	public static final ForgeConfigSpec SERVER_SPEC;
+	//public static final ConfigHandler SERVER;
+	public static final ForgeConfigSpec GENERAL_SPEC;
 
 	static {
-		final Pair<ConfigHandler, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ConfigHandler::new);
-		SERVER_SPEC = specPair.getRight();
-		SERVER = specPair.getLeft();
+		ForgeConfigSpec.Builder configBuilder = new ForgeConfigSpec.Builder();
+		setupConfig(configBuilder);
+		GENERAL_SPEC = configBuilder.build();
 	}
 
-	public ConfigHandler(ForgeConfigSpec.Builder builder) {
+	public static void setupConfig(ForgeConfigSpec.Builder builder) {
 		builder.push("general");
 		maxBridgeDistance = builder.comment("Max length of bridges made be Grappling Gun.").defineInRange("maxBridgeDistance", 400, 1, 1000);
 		bridgeDroopFactor = builder.comment("Percent of slack the bridge will have, causing it to hang.").defineInRange("bridgeDroopFactor", 100, 0, 100);
